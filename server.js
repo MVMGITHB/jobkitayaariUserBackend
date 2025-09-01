@@ -8,6 +8,36 @@ const app = express();
 
 app.use(express.json());
 
+const allowedOrigins = new Set([
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://admin-daily-news.vercel.app",
+  "https://admin-daily-news.vercel.app/",
+  "http://82.25.109.68:3005",
+  "http://82.25.109.68:3005/",
+  "https://jobkityaari.com/",
+  "https://jobkityaari.com"
+
+]);
+
+// CORS middleware setup
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // If origin is undefined (like Postman or curl), allow it
+      
+      if (!origin || allowedOrigins.has(origin)) {
+        callback(null, true);
+        // console.log("Origin:", origin);
+      } else {
+        console.warn("Blocked CORS request from:", origin);
+        callback(new Error("CORS not allowed for this origin"));
+      }
+    },
+    credentials: true, // Allows cookies and session headers
+  })
+);
+
 // Routes
 app.use("/api/users", userRoutes);
 
